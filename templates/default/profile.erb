@@ -1,0 +1,36 @@
+# =======
+# PROXY
+# =======
+# Derive current proxy from system settings
+
+PROXY_HOST=$( system_profiler SPNetworkDataType | grep "HTTP Proxy Server" | awk {'sub(/^.*:[ \t]*/, "http://", $0); print;exit;'} )
+PROXY_PORT=$( system_profiler SPNetworkDataType | grep "HTTP Proxy Port" | awk {'sub(/^.*:[ \t]*/, ":", $0); print;exit'} )
+
+# =======
+# EXPORTS
+# =======
+
+# PROXY
+
+export http_proxy="$PROXY_HOST$PROXY_PORT"
+export https_proxy="$http_proxy"
+export HTTP_PROXY="$http_proxy"
+export HTTPS_PROXY="$https_proxy"
+
+<% if node['profile']['editor'] %>
+
+# =======
+# EDITOR
+# =======
+
+export EDITOR="<%=node['profile']['editor']%>"
+
+<% end %>
+
+# =======
+# ALIASES
+# =======
+
+<%- node['profile']['aliases'].each_pair do |key, command| -%>
+alias <%= key %>="<%= command %>"
+<%- end -%>
